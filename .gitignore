@@ -1,0 +1,6 @@
+.firebase-key.json
+.env
+.test_auth.py
+.test_all_endpoints.py
+.delete_firebase_data.py
+```
