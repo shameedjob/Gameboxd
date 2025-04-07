@@ -56,10 +56,27 @@ def create_review():
 
 @reviews_bp.route('/game/<game_id>', methods=['GET'])
 def get_game_reviews(game_id):
-    game_id = game_id.strip()
-    reviews_docs = db.collection('reviews').where('gameId', '==', game_id).stream()
-    reviews = [doc.to_dict() for doc in reviews_docs]
-    return jsonify(reviews), 200
+    try:
+        game_id = game_id.strip()
+
+        limit = int(request.args.get('limit', 10))
+
+        from services.firebase import db
+
+        reviews_query = db.collection('reviews') \
+            .where('gameId', '==', game_id) \
+            .order_by('timestamp', direction='DESCENDING') \
+            .limit(limit)
+
+        reviews_docs = reviews_query.stream()
+        reviews = [doc.to_dict() for doc in reviews_docs]
+
+        return jsonify(reviews), 200
+
+    except Exception as e:
+        print(f"Error in get_game_reviews: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 
 @reviews_bp.route('/user/<user_id>', methods=['GET']) # Change from '/games/user/<user_id>' to '/user/<user_id>' | Method: GET (Get reviews by a user)
 def get_user_reviews(user_id):
