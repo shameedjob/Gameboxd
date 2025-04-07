@@ -5,6 +5,7 @@ from flask import Blueprint, request, jsonify
 import time
 import uuid
 import json
+import bcrypt
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -23,13 +24,16 @@ def register():
         
         # Extract required fields
         email = data.get('email')
-        password = data.get('password')  # In production, hash this!
+        password = data.get('password')
+
         username = data.get('username', email.split('@')[0])
         
         # Validate fields
         if not email or not password:
             return jsonify({"error": "Email and password are required"}), 400
-        
+
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
         # Check if user already exists
         from services.firebase import db
         existing_users = list(db.collection('users').where('email', '==', email).limit(1).stream())
@@ -41,6 +45,7 @@ def register():
         user_data = {
             'userId': user_id,
             'username': username,
+            'password': hashed_password,
             'email': email,
             'joinDate': time.time(),
             'bio': None,
@@ -86,7 +91,11 @@ def login():
         
         user_data = users[0].to_dict()
         user_id = user_data['userId']
-        
+        stored_password = user_data.get('password')
+
+        if not bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
+            return jsonify({"error": "Invalid credentials"}), 401
+
         # In a real app, verify password with Firebase Auth
         # For development, we'll accept any password
         

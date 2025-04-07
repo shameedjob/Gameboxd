@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import services.firebase as firebase
 import time
 
+
 # Load environment variables
 load_dotenv()
 

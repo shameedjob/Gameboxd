@@ -1,4 +1,4 @@
-#!/Users/gregorygrullon/gametracker-backend/venv/bin/python3
+#!/Users/danny/Gameboxd/venv/bin/python3.11
 # -*- coding: utf-8 -*-
 # Copyright 2024 Google LLC
 #
