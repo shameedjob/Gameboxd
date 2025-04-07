@@ -54,8 +54,9 @@ def create_review():
     
     return jsonify(review_data), 201
 
-@reviews_bp.route('/game/<game_id>', methods=['GET']) # Change from '/games/<game_id>' to '/game/<game_id>' | Method: GET (Get reviews for a game)
+@reviews_bp.route('/game/<game_id>', methods=['GET'])
 def get_game_reviews(game_id):
+    game_id = game_id.strip()
     reviews_docs = db.collection('reviews').where('gameId', '==', game_id).stream()
     reviews = [doc.to_dict() for doc in reviews_docs]
     return jsonify(reviews), 200
