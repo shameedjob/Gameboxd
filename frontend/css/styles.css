@@ -1,0 +1,34 @@
+/* Custom styles for Gamebox frontend */
+
+/* Letterboxd-inspired dark theme */ .letterboxd-dark { background-color: 
+#14181c; color: #fff; }
+
+.nav-link:hover { color: 
+#00e054 !important; }
+
+/* Game poster hover effect */ .game-poster { transition: transform 0.2s; } .game-poster:hover { transform: scale(1.05); }
+
+/* Loading spinner */ .loader { border-top-color: 
+#00e054; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
+
+@-webkit-keyframes spinner { 0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); } }
+
+@keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Custom scrollbar */ ::-webkit-scrollbar { width: 10px; } ::-webkit-scrollbar-track { background: 
+#1e2126; } ::-webkit-scrollbar-thumb { background: 
+#2c3440; border-radius: 5px; } ::-webkit-scrollbar-thumb:hover { background: 
+#00e054; }
+
+/* Toast notifications */ .toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 4px; z-index: 1000; transform: translateY(-100px); opacity: 0; transition: all 0.3s ease; } .toast.success { background-color: 
+#15803d; color: white; } .toast.error { background-color: 
+#dc2626; color: white; } .toast.show { transform: translateY(0); opacity: 1; }
+
+/* Game card styles */ .game-card { transition: all 0.2s ease; } .game-card:hover { transform: translateY(-8px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2); }
+
+/* Review styles */ .review-card { transition: all 0.2s ease; } .review-card:hover { background-color: 
+#1c2431; }
+
+/* Mobile menu */ @media (max-width: 768px) { .mobile-menu { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: 
+#14181c; z-index: 30; transform: translateX(-100%); transition: transform 0.3s ease; } .mobile-menu.open { transform: translateX(0); } }
+

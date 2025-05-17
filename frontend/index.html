@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamebox - Track and Review Your Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="letterboxd-dark min-h-screen">
+    <nav class="bg-gray-900 border-b border-gray-800 fixed w-full z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center" id="nav-home">
+                        <span class="text-2xl font-bold text-green-600">GAMEBOX</span>
+                    </a>
+                    <div class="hidden md:flex ml-10 space-x-6">
+                        <a href="#" class="nav-link text-gray-300 hover:text-white font-medium" id="nav-browse">BROWSE</a>
+                        <a href="#" class="nav-link text-gray-300 hover:text-white font-medium" id="nav-lists">LISTS</a>
+                        <a href="#" class="nav-link text-gray-300 hover:text-white font-medium" id="nav-members">MEMBERS</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Search games..." class="bg-gray-800 text-white rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 w-36 md:w-64">
+                        <button id="search-btn" class="absolute right-3 top-2.5 text-gray-400">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div id="auth-buttons">
+                        <a href="#" id="login-btn" class="text-gray-300 hover:text-white font-medium mr-4">SIGN IN</a>
+                        <a href="#" id="register-btn" class="bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded-md font-medium">CREATE ACCOUNT</a>
+                    </div>
+                    <div id="user-menu" class="hidden relative">
+                        <button id="user-menu-btn" class="flex items-center text-gray-300 hover:text-white focus:outline-none">
+                            <img id="user-avatar" src="assets/img/placeholder.png" alt="User avatar" class="rounded-full h-8 w-8 object-cover">
+                            <span id="username-display" class="ml-2 hidden md:block">Username</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-20">
+                            <a href="#" id="nav-profile" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Profile</a>
+                            <a href="#" id="nav-reviews" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Reviews</a>
+                            <a href="#" id="nav-watchlist" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Favorites</a>
+                            <a href="#" id="nav-settings" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Settings</a>
+                            <div class="border-t border-gray-700 my-1"></div>
+                            <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <main class="container mx-auto px-4 pt-24 pb-12">
+        <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+        </div>
+
+        <section id="home-page" class="mb-12">
+            <div class="hero-section mb-12 bg-gradient-to-r from-gray-900 to-gray-800 rounded-lg overflow-hidden">
+                <div class="container mx-auto px-4 py-12">
+                    <div class="flex flex-col md:flex-row items-center">
+                        <div class="md:w-1/2 mb-8 md:mb-0">
+                            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Track your gaming journey</h1>
+                            <p class="text-xl text-gray-300 mb-6">Record, review, and share the games you play with friends.</p>
+                            <button id="hero-join-btn" class="bg-green-700 hover:bg-green-600 text-white px-6 py-3 rounded-md font-bold text-lg">JOIN GAMEBOX</button>
+                        </div>
+                        <div class="md:w-1/2 flex justify-center md:justify-end">
+                            <div class="grid grid-cols-3 gap-2 max-w-md">
+                                <div class="rounded-md shadow-lg transform rotate-3 bg-gray-700 h-36 w-24"></div>
+                                <div class="rounded-md shadow-lg transform -rotate-3 translate-y-4 bg-gray-700 h-36 w-24"></div>
+                                <div class="rounded-md shadow-lg transform rotate-6 bg-gray-700 h-36 w-24"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold mb-6 text-white">Popular Games</h2>
+            <div id="popular-games" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-12">
+                <div class="animate-pulse">
+                    <div class="bg-gray-700 rounded-md h-56 mb-2"></div>
+                    <div class="bg-gray-700 h-4 rounded w-3/4 mb-2"></div>
+                    <div class="bg-gray-700 h-4 rounded w-1/2"></div>
+                </div>
+                <div class="animate-pulse">
+                    <div class="bg-gray-700 rounded-md h-56 mb-2"></div>
+                    <div class="bg-gray-700 h-4 rounded w-3/4 mb-2"></div>
+                    <div class="bg-gray-700 h-4 rounded w-1/2"></div>
+                </div>
+                <div class="animate-pulse">
+                    <div class="bg-gray-700 rounded-md h-56 mb-2"></div>
+                    <div class="bg-gray-700 h-4 rounded w-3/4 mb-2"></div>
+                    <div class="bg-gray-700 h-4 rounded w-1/2"></div>
+                </div>
+                <div class="animate-pulse">
+                    <div class="bg-gray-700 rounded-md h-56 mb-2"></div>
+                    <div class="bg-gray-700 h-4 rounded w-3/4 mb-2"></div>
+                    <div class="bg-gray-700 h-4 rounded w-1/2"></div>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold mb-6 text-white">Recent Activity</h2>
+            <div id="recent-activity" class="grid grid-cols-1 gap-4 mb-12">
+                <div class="animate-pulse flex p-4 bg-gray-800 rounded-lg">
+                    <div class="rounded-full bg-gray-700 h-10 w-10 mr-4"></div>
+                    <div class="flex-1">
+                        <div class="bg-gray-700 h-4 rounded w-1/4 mb-2"></div>
+                        <div class="bg-gray-700 h-4 rounded w-3/4 mb-2"></div>
+                        <div class="bg-gray-700 h-4 rounded w-1/2"></div>
+                    </div>
+                </div>
+                <div class="animate-pulse flex p-4 bg-gray-800 rounded-lg">
+                    <div class="rounded-full bg-gray-700 h-10 w-10 mr-4"></div>
+                    <div class="flex-1">
+                        <div class="bg-gray-700 h-4 rounded w-1/4 mb-2"></div>
+                        <div class="bg-gray-700 h-4 rounded w-3/4 mb-2"></div>
+                        <div class="bg-gray-700 h-4 rounded w-1/2"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-xl font-bold text-white mb-4">GAMEBOX</h3>
+                    <p class="max-w-md">Track your gaming journey, discover new games, and connect with other gamers worldwide.</p>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                    <div>
+                        <h4 class="text-lg font-semibold text-white mb-3">About</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-green-500">About Us</a></li>
+                            <li><a href="#" class="hover:text-green-500">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-white mb-3">Features</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-green-500">Browse Games</a></li>
+                            <li><a href="#" class="hover:text-green-500">Game Lists</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center">
+                <p>&copy; 2023 Gamebox. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
