@@ -55,3 +55,11 @@ Thumbs.db
 # Logs
 logs/
 *.log
+
+#adding games
+import_games.py
+
+replace_games.py
+
+#fire-base
+firebase-key.json
