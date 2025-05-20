@@ -34,14 +34,18 @@ document.addEventListener('click', (event) => {
 // Update auth UI based on user state
 function updateAuthUI(isAuthenticated, userData = null) {
     if (isAuthenticated && userData) {
-        authButtons.classList.add('hidden');
+        if (authButtons){
+            authButtons.classList.add('hidden');
+        }
         userMenu.classList.remove('hidden');
         usernameDisplay.textContent = userData.username;
         if (userData.profilePicture) {
             userAvatar.src = userData.profilePicture;
         }
     } else {
-        authButtons.classList.remove('hidden');
+        if (authButtons){
+            authButtons.classList.remove('hidden');
+        }
         userMenu.classList.add('hidden');
     }
 }

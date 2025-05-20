@@ -580,9 +580,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (userMenu && userDropdown) {
         userMenu.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('User menu clicked, toggling dropdown');
-            userDropdown.classList.toggle('hidden');
+            // Only prevent default if clicking on the menu button itself
+            if (e.target.closest('.flex.items-center')) {
+                // e.preventDefault();
+                console.log('User menu clicked, toggling dropdown');
+                userDropdown.classList.toggle('hidden');
+            }
         });
 
         // Close dropdown when clicking outside
