@@ -569,3 +569,39 @@ async function loadRecentActivity() {
         activityContainer.innerHTML = '<p class="text-gray-400 text-center py-4">Failed to load recent activity.</p>';
     }
 }
+
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize user menu dropdown
+    const userMenu = document.getElementById('user-menu');
+    const userDropdown = document.getElementById('user-dropdown');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    if (userMenu && userDropdown) {
+        userMenu.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('User menu clicked, toggling dropdown');
+            userDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!userMenu.contains(e.target)) {
+                userDropdown.classList.add('hidden');
+            }
+        });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            window.location.href = '/frontend/index.html';
+        });
+    }
+
+    // Initialize profile page
+    // initializeProfile();
+}); 
