@@ -2,7 +2,7 @@ import GameboxAPI from './api.js';
 import { showToast, showLoading, hideLoading } from './utils.js';
 
 // API Base URL
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 
 // DOM Elements
 const userMenu = document.getElementById('user-menu');
@@ -87,7 +87,7 @@ export function setAuthToken(token) {
 
 // Remove auth token
 export function removeAuthToken() {
-    // localStorage.removeItem('token');
+    localStorage.removeItem('token');
 }
 
 // Login user
