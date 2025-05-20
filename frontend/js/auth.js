@@ -1,7 +1,26 @@
-import GameboxAPI from './api.js'; import { showToast, showLoading, hideLoading } from './utils.js';
+import GameboxAPI from './api.js';
+import { showToast, showLoading, hideLoading } from './utils.js';
+
+// API Base URL
+const API_BASE_URL = 'http://localhost:5000/api';
+
+// DOM Elements
+const userMenu = document.getElementById('user-menu');
+const userDropdown = document.getElementById('user-dropdown');
+const userMenuBtn = document.getElementById('user-menu-btn');
+const authButtons = document.getElementById('auth-buttons');
+const usernameDisplay = document.getElementById('username-display');
+const userAvatar = document.getElementById('user-avatar');
+const loginForm = document.getElementById('login-form');
+const registerForm = document.getElementById('register-form');
+const loginPage = document.getElementById('login-page');
+const registerPage = document.getElementById('register-page');
+const authPages = document.getElementById('auth-pages');
 
 // Close dropdown when clicking outside
 document.addEventListener('click', (event) => {
+    if (!userDropdown || !userMenuBtn) return;
+    
     if (userDropdown.classList.contains('hidden') || 
         userMenuBtn.contains(event.target)) {
         return;
@@ -12,142 +31,194 @@ document.addEventListener('click', (event) => {
     }
 });
 
-// Check if user is already logged in
-checkAuthState();
+// Update auth UI based on user state
+function updateAuthUI(isAuthenticated, userData = null) {
+    if (isAuthenticated && userData) {
+        authButtons.classList.add('hidden');
+        userMenu.classList.remove('hidden');
+        usernameDisplay.textContent = userData.username;
+        if (userData.profilePicture) {
+            userAvatar.src = userData.profilePicture;
+        }
+    } else {
+        authButtons.classList.remove('hidden');
+        userMenu.classList.add('hidden');
+    }
 }
 
-if (token && userId) {
+// Show login page
+function showLoginPage() {
+    document.querySelectorAll('main > section').forEach(section => {
+        section.classList.add('hidden');
+    });
+    authPages.classList.remove('hidden');
+    loginPage.classList.remove('hidden');
+    registerPage.classList.add('hidden');
+    window.location.hash = 'login';
+    if (loginForm) loginForm.reset();
+}
+
+// Show register page
+function showRegisterPage() {
+    document.querySelectorAll('main > section').forEach(section => {
+        section.classList.add('hidden');
+    });
+    authPages.classList.remove('hidden');
+    registerPage.classList.remove('hidden');
+    loginPage.classList.add('hidden');
+    window.location.hash = 'register';
+    if (registerForm) registerForm.reset();
+}
+
+// Check if user is authenticated
+export function isAuthenticated() {
+    return localStorage.getItem('token') !== null;
+}
+
+// Get auth token
+export function getAuthToken() {
+    return localStorage.getItem('token');
+}
+
+// Set auth token
+export function setAuthToken(token) {
+    localStorage.setItem('token', token);
+}
+
+// Remove auth token
+export function removeAuthToken() {
+    localStorage.removeItem('token');
+}
+
+// Login user
+export async function loginUser(email, password) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Login failed');
+        }
+
+        const data = await response.json();
+        setAuthToken(data.token);
+        return data;
+    } catch (error) {
+        console.error('Login error:', error);
+        throw error;
+    }
+}
+
+// Register user
+export async function registerUser(email, password, username) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password, username })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Registration failed');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Registration error:', error);
+        throw error;
+    }
+}
+
+// Get current user
+export async function getCurrentUser() {
+    try {
+        const token = getAuthToken();
+        if (!token) {
+            throw new Error('No token found');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to get user data');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Get current user error:', error);
+        throw error;
+    }
+}
+
+// Logout user
+export function logoutUser() {
+    removeAuthToken();
+    window.location.href = '/index.html';
+}
+
+// Add auth token to fetch requests
+export function fetchWithAuth(url, options = {}) {
+    const token = getAuthToken();
+    if (!token) {
+        throw new Error('No token found');
+    }
+
+    const headers = {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`
+    };
+
+    return fetch(url, {
+        ...options,
+        headers
+    });
+}
+
+// Check auth state on page load
+async function checkAuthState() {
+    const token = getAuthToken();
+    if (!token) {
+        updateAuthUI(false);
+        return null;
+    }
+
     try {
         showLoading();
-        const userData = await GameboxAPI.getCurrentUser();
+        const userData = await getCurrentUser();
         hideLoading();
         
         if (userData) {
-            // User is authenticated
             updateAuthUI(true, userData);
             return userData;
         } else {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userId');
+            removeAuthToken();
             updateAuthUI(false);
         }
     } catch (error) {
         hideLoading();
         console.error('Auth check failed:', error);
-        // Clear potentially invalid token
-        localStorage.removeItem('token');
-        localStorage.removeItem('userId');
+        removeAuthToken();
         updateAuthUI(false);
     }
-} else {
-    updateAuthUI(false);
-}
-
-return null;
-}
-
-    usernameDisplay.textContent = userData.username;
-    if (userData.profilePicture) {
-        userAvatar.src = userData.profilePicture;
-    }
-} else {
-    // User is not logged in
-    authButtons.classList.remove('hidden');
-    userMenu.classList.add('hidden');
-}
-}
-document.querySelectorAll('main > section').forEach(section => {
-    section.classList.add('hidden');
-});
-
-// Show auth pages
-authPages.classList.remove('hidden');
-loginPage.classList.remove('hidden');
-registerPage.classList.add('hidden');
-
-// Update URL hash
-window.location.hash = 'login';
-
-loginForm.reset();
-}
-
-
-document.querySelectorAll('main > section').forEach(section => {
-    section.classList.add('hidden');
-});
-
-authPages.classList.remove('hidden');
-registerPage.classList.remove('hidden');
-loginPage.classList.add('hidden');
-
-window.location.hash = 'register';
-
-registerForm.reset();
-}
-
-const email = document.getElementById('login-email').value;
-const password = document.getElementById('login-password').value;
-
-try {
-    showLoading();
-    const response = await GameboxAPI.login({ email, password });
-    hideLoading();
     
-    if (response && response.token && response.userId) {
-        // Save auth data
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('userId', response.userId);
-        
-        // Get user data
-        const userData = await GameboxAPI.getCurrentUser();
-        
-        // Update UI
-        updateAuthUI(true, userData);
-
-        showToast('Login successful!', 'success');
-        
-        // Redirect to home
-        window.location.hash = '';
-    }
-} catch (error) {
-    hideLoading();
-    console.error('Login error:', error);
-    showToast(error.message || 'Login failed. Please check your credentials.', 'error');
-}
+    return null;
 }
 
-
-const username = document.getElementById('register-username').value;
-const email = document.getElementById('register-email').value;
-const password = document.getElementById('register-password').value;
-
-try {
-    showLoading();
-    const response = await GameboxAPI.register({ username, email, password });
-    hideLoading();
-    
-    if (response && response.userId) {
-        showToast('Registration successful! Please log in.', 'success');
-        
-
-        showLoginPage();
-    }
-} catch (error) {
-    hideLoading();
-    console.error('Registration error:', error);
-    showToast(error.message || 'Registration failed. Please try again.', 'error');
-}
-}
-
-
-// Clear auth data
-localStorage.removeItem('token');
-localStorage.removeItem('userId');
-
-updateAuthUI(false);
-
-showToast('You have been logged out.', 'success');
-
-window.location.hash = '';
-}
+// Initialize auth state
+checkAuthState();
 

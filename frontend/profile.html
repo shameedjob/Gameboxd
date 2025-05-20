@@ -3,32 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - Gameboxd</title>
+    <title>Profile - Gamebox</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/profile.css">
 </head>
-<body>
-    <nav class="navbar">
-        <div class="nav-brand">
-            <a href="/">Gameboxd</a>
-        </div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/games.html">Games</a>
-            <a href="/lists.html">Lists</a>
-            <a href="/profile.html" class="active">Profile</a>
-            <button id="logout-btn" class="btn-logout">Logout</button>
+<body class="letterboxd-dark min-h-screen">
+    <nav class="bg-gray-900 border-b border-gray-800 fixed w-full z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="/index.html" class="flex items-center">
+                        <span class="text-2xl font-bold text-green-600">GAMEBOX</span>
+                    </a>
+                    <div class="hidden md:flex ml-10 space-x-6">
+                        <a href="/games.html" class="nav-link text-gray-300 hover:text-white font-medium">BROWSE</a>
+                        <a href="/lists.html" class="nav-link text-gray-300 hover:text-white font-medium">LISTS</a>
+                        <a href="/members.html" class="nav-link text-gray-300 hover:text-white font-medium">MEMBERS</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Search games..." class="bg-gray-800 text-white rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 w-36 md:w-64">
+                        <button id="search-btn" class="absolute right-3 top-2.5 text-gray-400">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div id="user-menu" class="relative">
+                        <div class="flex items-center text-gray-300 hover:text-white focus:outline-none">
+                            <img id="user-avatar" src="assets/img/placeholder.png" alt="User avatar" class="rounded-full h-8 w-8 object-cover">
+                            <span id="username-display" class="ml-2 hidden md:block">Username</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </div>
+                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-20">
+                            <a href="/frontend/profile.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Profile</a>
+                            <a href="/frontend/reviews.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Reviews</a>
+                            <a href="/frontend/favorites.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Favorites</a>
+                            <a href="/frontend/settings.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Settings</a>
+                            <div class="border-t border-gray-700 my-1"></div>
+                            <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <main class="container">
-        <div id="profile-container" class="profile-container">
-            <!-- Profile content will be dynamically inserted here -->
+    <main class="container mx-auto px-4 pt-24 pb-12">
+        <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+            <!-- Profile Header -->
+            <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                <div class="flex items-center space-x-6">
+                    <img id="profile-avatar" src="assets/img/placeholder.png" alt="Profile avatar" class="w-24 h-24 rounded-full object-cover">
+                    <div>
+                        <h1 id="profile-username" class="text-2xl font-bold text-white mb-2">Username</h1>
+                        <p id="profile-bio" class="text-gray-300 mb-4">Member since 2024</p>
+                        <div class="flex space-x-4">
+                            <div class="text-center">
+                                <span id="games-count" class="block text-xl font-bold text-white">0</span>
+                                <span class="text-gray-400">Games</span>
+                            </div>
+                            <div class="text-center">
+                                <span id="reviews-count" class="block text-xl font-bold text-white">0</span>
+                                <span class="text-gray-400">Reviews</span>
+                            </div>
+                            <div class="text-center">
+                                <span id="lists-count" class="block text-xl font-bold text-white">0</span>
+                                <span class="text-gray-400">Lists</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Left Column -->
+                <div class="md:col-span-2 space-y-6">
+                    <!-- Recent Activity -->
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h2 class="text-xl font-bold text-white mb-4">Recent Activity</h2>
+                        <div id="recent-activity" class="space-y-4">
+                            <!-- Activity items will be dynamically inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Reviews -->
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h2 class="text-xl font-bold text-white mb-4">Recent Reviews</h2>
+                        <div id="recent-reviews" class="space-y-4">
+                            <!-- Reviews will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    <!-- Currently Playing -->
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h2 class="text-xl font-bold text-white mb-4">Currently Playing</h2>
+                        <div id="currently-playing" class="space-y-4">
+                            <!-- Currently playing games will be dynamically inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Game Lists -->
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h2 class="text-xl font-bold text-white mb-4">Game Lists</h2>
+                        <div id="game-lists" class="space-y-4">
+                            <!-- Game lists will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/profile.js"></script>
+    <footer class="bg-gray-900 text-gray-400 py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-xl font-bold text-white mb-4">GAMEBOX</h3>
+                    <p class="max-w-md">Track your gaming journey, discover new games, and connect with other gamers worldwide.</p>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                    <div>
+                        <h4 class="text-lg font-semibold text-white mb-3">About</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-green-500">About Us</a></li>
+                            <li><a href="#" class="hover:text-green-500">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-white mb-3">Features</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-green-500">Browse Games</a></li>
+                            <li><a href="#" class="hover:text-green-500">Game Lists</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center">
+                <p>&copy; 2024 Gamebox. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/profile.js"></script>
 </body>
 </html> 

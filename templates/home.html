@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gameboxd - Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #121212;
+      color: #f0f0f0;
+    }
+    header {
+      background-color: #1f1f1f;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    nav a {
+      color: #f0f0f0;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-weight: 600;
+    }
+    .container {
+      padding: 2rem;
+    }
+    .review {
+      display: flex;
+      background-color: #1c1c1c;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .poster {
+      width: 100px;
+      margin-right: 1rem;
+    }
+    .poster img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .content {
+      flex: 1;
+    }
+    .Game-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .rating {
+      color: #ffce00;
+      margin-bottom: 0.5rem;
+    }
+    .review-text {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Gameboxd</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Reviews</a>
+      <a href="#">Playlist</a>
+      <a href="#">Profile</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="review">
+      <div class="poster">
+        <img src="https://i.redd.it/which-one-is-the-superior-cover-art-v0-g4urr2d8zu3d1.png?width=1280&format=png&auto=webp&s=e786360b741069e4471bd417695df68b21465eca" alt="Minecraft">
+      </div>
+      <div class="content">
+        <div class="Game-title">Minecraft</div>
+        <div class="rating">★ ★ ☆ ☆ ☆</div>
+        <div class="review-text">
+            Build anything you can imagine, uncover eerie mysteries, and survive the night in the ultimate sandbox game. In Minecraft, every playthrough is different, and unforgettable adventures await behind every corner. Explore and craft your way through an infinite world thats yours to shape, one block at a time.
+        </div>
+      </div>
+    </div>
+
+    <div class="review">
+      <div class="poster">
+        <img src="https://upload.wikimedia.org/wikipedia/en/1/13/Rocket_League_cover.png" alt="Rocket League">
+      </div>
+      <div class="content">
+        <div class="Game-title">Rocket League</div>
+        <div class="rating">★ ★ ★ ★ ★</div>
+        <div class="review-text">
+            Welcome to the high-powered hybrid of arcade-style soccer and vehicular mayhem! Customize your car, hit the field, and compete in one of the most critically acclaimed sports games of all time!
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
