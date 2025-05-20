@@ -64,21 +64,34 @@ def search_games():
         limit = request.args.get('limit', default=20, type=int)
         
         # Search in Firebase first
-        results = db.collection('games').where('title', '>=', query).where('title', '<=', query + '\uf8ff').limit(limit).stream()
-        games = [doc.to_dict() for doc in results]
+        #results = db.collection('games').where('title', '>=', query).where('title', '<=', query + '\uf8ff').limit(limit).stream()
+        #games = [doc.to_dict() for doc in results]
         
         # If no results, search using Steam API
-        if not games:
+        games = []
+        if True:
             steam_games = SteamAPI.search_games(query, limit)
-            
-            games = []
+            print("steam_games", len(steam_games))
             for game in steam_games:
-                game_data = {
-                    'title': game.get('name'),
-                    'apiSourceId': f"steam:{game.get('appid')}",
-                }
-                games.append(game_data)
-        
+                app_id = game.get('appid')
+                details = SteamAPI.get_game_details(app_id)
+                
+                if details:
+                    game_data = {
+                        'title': details.get('name'),
+                        'coverImage': details.get('header_image'),
+                        'releaseDate': details.get('release_date', {}).get('date'),
+                        'platforms': [
+                            platform for platform, has_support in details.get('platforms', {}).items() 
+                            if has_support
+                        ],
+                        'developers': details.get('developers', []),
+                        'genres': [genre.get('description') for genre in details.get('genres', [])],
+                        'apiSourceId': f"steam:{app_id}",
+                        'importTimestamp': time.time()
+                    }
+                    games.append(game_data)
+        print("games", len(games))
         return jsonify(games), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

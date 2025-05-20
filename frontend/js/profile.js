@@ -14,7 +14,7 @@ const gameLists = document.getElementById('game-lists');
 const loading = document.getElementById('loading');
 
 // API Base URL
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 
 // Format timestamp to relative time
 function formatTimestamp(timestamp) {
@@ -184,7 +184,7 @@ async function removeCurrentlyPlaying(userId, gameId) {
 // Initialize profile page
 async function initializeProfile() {
     if (!isAuthenticated()) {
-        window.location.href = '/login.html';
+        window.location.href = '/frontend/index.html#login';
         return;
     }
 
@@ -192,7 +192,7 @@ async function initializeProfile() {
     
     try {
         // Get user ID from token
-        const token = getAuthToken();
+        const token = localStorage.getItem('token');
         const userId = token.split('_')[2]; // Assuming token format: dev_token_<user_id>_<timestamp>
 
         // Fetch profile data
