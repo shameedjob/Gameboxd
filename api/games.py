@@ -20,6 +20,7 @@ def get_games():
         
         # If no games in Firebase yet, fetch from Steam API
         if not games:
+            print("No games in Firebase, fetching from Steam API...")
             steam_games = SteamAPI.get_popular_games(limit)
             
             # Get details for each game and store in Firebase
@@ -47,6 +48,7 @@ def get_games():
                     db.collection('games').document(f"steam:{app_id}").set(game_data)
                     games.append(game_data)
         
+        print(f"Found {len(games)} games in Firebase")
         return jsonify(games), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -54,6 +56,7 @@ def get_games():
 @games_bp.route('/search', methods=['GET']) # Change from '/games/search' to '/search' | Method: GET (Search games)
 def search_games():
     try:
+        print("Searching for games...")
         query = request.args.get('q', '')
         if not query:
             return jsonify({"error": "Search query is required"}), 400
@@ -116,5 +119,97 @@ def get_game(game_id):
                 return jsonify(game_data), 200
         
         return jsonify({"error": "Game not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@games_bp.route('/user/<user_id>/currently-playing', methods=['GET'])
+def get_currently_playing(user_id):
+    try:
+        # Get user's currently playing games from Firebase
+        user_doc = db.collection('users').document(user_id).get()
+        if not user_doc.exists:
+            return jsonify({"error": "User not found"}), 404
+
+        user_data = user_doc.to_dict()
+        currently_playing = user_data.get('currentlyPlaying', [])
+
+        # Get details for each game
+        games = []
+        for game_id in currently_playing:
+            game_doc = db.collection('games').document(game_id).get()
+            if game_doc.exists:
+                games.append(game_doc.to_dict())
+
+        return jsonify(games), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@games_bp.route('/user/<user_id>/currently-playing', methods=['POST'])
+def add_currently_playing(user_id):
+    try:
+        # Get Authorization header
+        auth_header = request.headers.get('Authorization', '')
+        if not auth_header.startswith('Bearer '):
+            return jsonify({"error": "Authorization required"}), 401
+        
+        # Simple check if the token contains the user ID (for development)
+        token = auth_header.split('Bearer ')[1]
+        if user_id not in token:
+            return jsonify({"error": "Unauthorized to update this profile"}), 403
+
+        data = request.json
+        game_id = data.get('gameId')
+        
+        if not game_id:
+            return jsonify({"error": "Game ID is required"}), 400
+
+        # Get current list
+        user_doc = db.collection('users').document(user_id).get()
+        if not user_doc.exists:
+            return jsonify({"error": "User not found"}), 404
+
+        user_data = user_doc.to_dict()
+        currently_playing = user_data.get('currentlyPlaying', [])
+
+        # Add game if not already in list
+        if game_id not in currently_playing:
+            currently_playing.append(game_id)
+            db.collection('users').document(user_id).update({
+                "currentlyPlaying": currently_playing
+            })
+
+        return jsonify({"message": "Game added to currently playing"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@games_bp.route('/user/<user_id>/currently-playing/<game_id>', methods=['DELETE'])
+def remove_currently_playing(user_id, game_id):
+    try:
+        # Get Authorization header
+        auth_header = request.headers.get('Authorization', '')
+        if not auth_header.startswith('Bearer '):
+            return jsonify({"error": "Authorization required"}), 401
+        
+        # Simple check if the token contains the user ID (for development)
+        token = auth_header.split('Bearer ')[1]
+        if user_id not in token:
+            return jsonify({"error": "Unauthorized to update this profile"}), 403
+
+        # Get current list
+        user_doc = db.collection('users').document(user_id).get()
+        if not user_doc.exists:
+            return jsonify({"error": "User not found"}), 404
+
+        user_data = user_doc.to_dict()
+        currently_playing = user_data.get('currentlyPlaying', [])
+
+        # Remove game if in list
+        if game_id in currently_playing:
+            currently_playing.remove(game_id)
+            db.collection('users').document(user_id).update({
+                "currentlyPlaying": currently_playing
+            })
+
+        return jsonify({"message": "Game removed from currently playing"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

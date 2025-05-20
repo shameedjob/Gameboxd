@@ -13,7 +13,7 @@
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center">
-                    <a href="#" class="flex items-center" id="nav-home">
+                    <a href="/frontend/index.html" class="flex items-center" id="nav-home">
                         <span class="text-2xl font-bold text-green-600">GAMEBOX</span>
                     </a>
                     <div class="hidden md:flex ml-10 space-x-6">
@@ -33,16 +33,16 @@
                         <a href="#" id="register-btn" class="bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded-md font-medium">CREATE ACCOUNT</a>
                     </div>
                     <div id="user-menu" class="hidden relative">
-                        <button id="user-menu-btn" class="flex items-center text-gray-300 hover:text-white focus:outline-none">
+                        <a href="/frontend/profile.html" class="flex items-center text-gray-300 hover:text-white focus:outline-none">
                             <img id="user-avatar" src="assets/img/placeholder.png" alt="User avatar" class="rounded-full h-8 w-8 object-cover">
                             <span id="username-display" class="ml-2 hidden md:block">Username</span>
                             <i class="fas fa-chevron-down ml-2 text-xs"></i>
-                        </button>
+                        </a>
                         <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-20">
-                            <a href="#" id="nav-profile" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Profile</a>
-                            <a href="#" id="nav-reviews" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Reviews</a>
-                            <a href="#" id="nav-watchlist" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Favorites</a>
-                            <a href="#" id="nav-settings" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Settings</a>
+                            <a href="/profile.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Profile</a>
+                            <a href="/reviews.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Reviews</a>
+                            <a href="/favorites.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Favorites</a>
+                            <a href="/settings.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Settings</a>
                             <div class="border-t border-gray-700 my-1"></div>
                             <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Log Out</a>
                         </div>
