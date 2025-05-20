@@ -2,14 +2,14 @@
 # The Reviews are a way for users to leave reviews for games.
 # The API allows users to create a review, get reviews for a game, and get reviews by a user.
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from services.firebase import db
 import time
 import uuid
 
 reviews_bp = Blueprint('reviews', __name__) # Change from 'games' to 'reviews'
 
-@reviews_bp.route('/', methods=['POST']) # Change from '/games' to '/' | Method: POST (Create a review)
+@reviews_bp.route('/reviews', methods=['POST'])
 def create_review():
     data = request.json
     
@@ -82,4 +82,28 @@ def get_game_reviews(game_id):
 def get_user_reviews(user_id):
     reviews_docs = db.collection('reviews').where('userId', '==', user_id).stream()
     reviews = [doc.to_dict() for doc in reviews_docs]
+    return jsonify(reviews), 200
+
+# Add a route to match frontend expectation
+@reviews_bp.route('/games/<game_id>/reviews', methods=['GET'])
+def get_reviews_for_game(game_id):
+    # Fetch reviews for this game from Firebase
+    reviews_ref = db.collection('reviews').where('gameId', '==', game_id)
+    reviews = []
+    for doc in reviews_ref.stream():
+        review = doc.to_dict()
+        # Fetch user info for each review
+        user_doc = db.collection('users').document(review['userId']).get()
+        if user_doc.exists:
+            user_data = user_doc.to_dict()
+            review['user'] = {
+                'username': user_data.get('username', 'Unknown'),
+                'profilePicture': user_data.get('profilePicture', None)
+            }
+        else:
+            review['user'] = {
+                'username': 'Unknown',
+                'profilePicture': None
+            }
+        reviews.append(review)
     return jsonify(reviews), 200

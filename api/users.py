@@ -74,3 +74,19 @@ def get_favorites(user_id):
             favorites.append(game_doc.to_dict())
     
     return jsonify(favorites), 200
+
+@users_bp.route('/profile', methods=['GET'])
+def get_current_user_profile():
+    auth_header = request.headers.get('Authorization', '')
+    if not auth_header.startswith('Bearer '):
+        return jsonify({"error": "Authorization required"}), 401
+    token = auth_header.split('Bearer ')[1]
+    # Extract user_id from token (dev_token_<user_id>_<timestamp>)
+    try:
+        user_id = token.split('_')[2]
+    except Exception:
+        return jsonify({"error": "Invalid token format"}), 401
+    user_doc = db.collection('users').document(user_id).get()
+    if user_doc.exists:
+        return jsonify(user_doc.to_dict()), 200
+    return jsonify({"error": "User not found"}), 404
