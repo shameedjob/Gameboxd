@@ -2,7 +2,7 @@
 # This file initializes the Flask app, sets up CORS, and registers the API blueprints.
 # BASICALLY, THIS FILE IS THE STARTING POINT OF THE APPLICATION. :)
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS # type: ignore
 import os
 from dotenv import load_dotenv
@@ -27,7 +27,7 @@ from api.activities import activities_bp
 # Register blueprints
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(games_bp, url_prefix='/api/games')
-app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
+app.register_blueprint(reviews_bp, url_prefix='/api')
 app.register_blueprint(users_bp, url_prefix='/api/users')
 app.register_blueprint(lists_bp, url_prefix='/api/lists')
 app.register_blueprint(activities_bp, url_prefix='/api/activities')
@@ -45,6 +45,11 @@ def index():
 #         "message": "Auth API is accessible",
 #         "timestamp": time.time()
 #     })
-    
+
+# Serve static files from the frontend directory
+@app.route('/frontend/<path:filename>')
+def serve_frontend(filename):
+    return send_from_directory(os.path.join(app.root_path, 'frontend'), filename)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001)  # Change from port 5000 to 5001
