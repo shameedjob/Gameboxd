@@ -2,7 +2,7 @@ import GameboxAPI from './api.js';
 import { showToast, showLoading, hideLoading } from './utils.js';
 
 // API Base URL
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 
 // DOM Elements
 const userMenu = document.getElementById('user-menu');
@@ -72,22 +72,41 @@ function showRegisterPage() {
 
 // Check if user is authenticated
 export function isAuthenticated() {
-    return localStorage.getItem('token') !== null;
+    return sessionStorage.getItem('token') !== null;
 }
 
 // Get auth token
-export function getAuthToken() {
-    return localStorage.getItem('token');
+export async function getAuthToken() {
+    if (sessionStorage.getItem('token')) {
+        return sessionStorage.getItem('token');
+    }
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/token`, {
+            method: 'GET'
+        });
+
+        if (!response.ok) {
+            sessionStorage.removeItem('token');
+            return null;
+        }
+
+        const data = await response.json();
+        return data.token;
+    } catch (error) {
+        console.error('Error getting token:', error);
+        sessionStorage.removeItem('token');
+        return null;
+    }
 }
 
 // Set auth token
 export function setAuthToken(token) {
-    localStorage.setItem('token', token);
+    sessionStorage.setItem('token', token);
 }
 
 // Remove auth token
 export function removeAuthToken() {
-    // localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
 }
 
 // Login user
@@ -142,7 +161,7 @@ export async function registerUser(email, password, username) {
 // Get current user
 export async function getCurrentUser() {
     try {
-        const token = getAuthToken();
+        const token = await getAuthToken();
         if (!token) {
             throw new Error('No token found');
         }
@@ -172,8 +191,8 @@ export function logoutUser() {
 }
 
 // Add auth token to fetch requests
-export function fetchWithAuth(url, options = {}) {
-    const token = getAuthToken();
+export async function fetchWithAuth(url, options = {}) {
+    const token = sessionStorage.getItem('token');
     if (!token) {
         throw new Error('No token found');
     }
@@ -191,7 +210,7 @@ export function fetchWithAuth(url, options = {}) {
 
 // Check auth state on page load
 async function checkAuthState() {
-    const token = getAuthToken();
+    const token = await getAuthToken();
     if (!token) {
         updateAuthUI(false);
         return null;

@@ -486,7 +486,6 @@ function updateNavbarAuthUI() {
         if (userMenu) userMenu.classList.add('hidden');
     }
 }
-
 async function handleSearch() {
     const searchInput = document.getElementById('search-input');
     const searchTerm = searchInput.value.trim().toLowerCase();
@@ -497,9 +496,9 @@ async function handleSearch() {
     const gamesContainer = document.getElementById('popular-games');
     gamesContainer.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-gray-400">Searching...</p></div>';
     try {
-        const response = await fetch('http://127.0.0.1:5001/api/games');
-        const games = await response.json();
-        const filteredGames = games.filter(game => game.title && game.title.toLowerCase().startsWith(searchTerm));
+        const response = await fetch('http://127.0.0.1:5001/api/games/search?q='+encodeURIComponent(searchTerm));
+        const filteredGames = await response.json();
+        // const filteredGames = games.filter(game => game.title && game.title.toLowerCase().startsWith(searchTerm));
         gamesContainer.innerHTML = '';
         if (filteredGames.length === 0) {
             gamesContainer.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-gray-400">No games found.</p></div>';
