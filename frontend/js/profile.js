@@ -1,4 +1,5 @@
 import { getAuthToken, isAuthenticated, fetchWithAuth } from './auth.js';
+import { loadUserReviews } from './utils.js';
 
 // DOM Elements
 const profileAvatar = document.getElementById('profile-avatar');
@@ -202,8 +203,9 @@ async function initializeProfile() {
             profileUsername.textContent = profile.username;
             profileBio.textContent = profile.bio || 'No bio yet';
             gamesCount.textContent = profile.games?.length || 0;
-            reviewsCount.textContent = profile.reviews?.length || 0;
             listsCount.textContent = profile.lists?.length || 0;
+            // Load user reviews
+            loadUserReviews(userId);
         }
 
         // Fetch and display activities
@@ -211,13 +213,6 @@ async function initializeProfile() {
         recentActivity.innerHTML = activities
             .slice(0, 5)
             .map(createActivityItem)
-            .join('');
-
-        // Fetch and display reviews
-        const reviews = await fetchUserReviews(userId);
-        recentReviews.innerHTML = reviews
-            .slice(0, 3)
-            .map(createReviewItem)
             .join('');
 
         // Fetch and display currently playing games

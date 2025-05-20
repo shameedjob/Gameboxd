@@ -115,4 +115,37 @@ export function updateUrlParams(params) {
         }
     });
     window.history.pushState({}, '', url);
-} 
+}
+
+export async function loadUserReviews(userId) {
+    const response = await fetch(`/api/user/${userId}`);
+    const reviews = await response.json();
+
+    const reviewsContainer = document.getElementById('recent-reviews');
+    reviewsContainer.innerHTML = '';
+
+    // Update the reviews count in the profile header
+    const reviewsCountElem = document.getElementById('reviews-count');
+    if (reviewsCountElem) {
+        reviewsCountElem.textContent = reviews.length;
+    }
+
+    if (!reviews.length) {
+        reviewsContainer.innerHTML = '<p class="text-gray-400">No reviews yet.</p>';
+        return;
+    }
+
+    reviews.forEach(review => {
+        const reviewDiv = document.createElement('div');
+        reviewDiv.className = 'review-item bg-gray-800 p-4 rounded mb-2';
+        reviewDiv.innerHTML = `
+            <div class="font-bold text-white">${review.gameId}</div>
+            <div class="text-gray-300">${review.content}</div>
+            <div class="text-gray-500 text-sm">${new Date(review.timestamp * 1000).toLocaleString()}</div>
+        `;
+        reviewsContainer.appendChild(reviewDiv);
+    });
+}
+
+// Call this function with the current user's ID when the profile loads
+// loadUserReviews(currentUserId); 
