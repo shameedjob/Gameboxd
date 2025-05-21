@@ -139,7 +139,7 @@ async function handleLogin(e) {
 
     try {
         console.log('Logging in...');
-        const response = await fetch('http://127.0.0.1:5001/api/auth/login', {
+        const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -174,7 +174,7 @@ async function handleRegister(e) {
 
     try {
         console.log('Creating account...');
-        const response = await fetch('http://127.0.0.1:5001/api/auth/register', {
+        const response = await fetch('/api/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -224,7 +224,7 @@ function showGameDetails(gameId) {
     gameDetailsSection.classList.remove('hidden');
 
     // Fetch game details
-    fetch(`http://127.0.0.1:5001/api/games/${gameId}`)
+    fetch(`/api/games/${gameId}`)
         .then(response => response.json())
         .then(game => {
             gameDetailsSection.innerHTML = `
@@ -306,7 +306,7 @@ function showGameDetails(gameId) {
                 }
 
                 try {
-                    const response = await fetch('http://127.0.0.1:5001/api/reviews', {
+                    const response = await fetch('/api/reviews', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -358,7 +358,7 @@ async function loadGameReviews(gameId) {
     if (!reviewsList) return;
 
     try {
-        const response = await fetch(`http://127.0.0.1:5001/api/games/${gameId}/reviews`);
+        const response = await fetch(`/api/games/${gameId}/reviews`);
         const reviews = await response.json();
 
         if (!reviews || reviews.length === 0) {
@@ -401,7 +401,7 @@ async function loadGames() {
     }
     
     try {
-        const response = await fetch('http://127.0.0.1:5001/api/games');
+        const response = await fetch('/api/games');
         
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -464,7 +464,7 @@ function updateNavbarAuthUI() {
 
     if (token) {
         // Fetch user info from backend
-        fetch('http://127.0.0.1:5001/api/users/profile', {
+        fetch('/api/users/profile', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -496,7 +496,7 @@ async function handleSearch() {
     const gamesContainer = document.getElementById('popular-games');
     gamesContainer.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-gray-400">Searching...</p></div>';
     try {
-        const response = await fetch('http://127.0.0.1:5001/api/games/search?q='+encodeURIComponent(searchTerm));
+        const response = await fetch('/api/games/search?q='+encodeURIComponent(searchTerm));
         const filteredGames = await response.json();
         // const filteredGames = games.filter(game => game.title && game.title.toLowerCase().startsWith(searchTerm));
         gamesContainer.innerHTML = '';
@@ -537,7 +537,7 @@ async function loadRecentActivity() {
     }
 
     try {
-        const response = await fetch(`http://127.0.0.1:5001/api/activities/feed/${userId}`);
+        const response = await fetch(`/api/activities/feed/${userId}`);
         const activities = await response.json();
 
         if (!activities || activities.length === 0) {

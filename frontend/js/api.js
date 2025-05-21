@@ -2,7 +2,7 @@
 // API service for Gamebox
 
 class GameboxAPI {
-    static BASE_URL = 'http://127.0.0.1:5001/api';
+    static BASE_URL = '/api';
     
     static async request(endpoint, options = {}) {
         try {
